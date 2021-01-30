@@ -63,8 +63,6 @@ tee <<-EOF
 	         this can take a long time  
 EOF
   # update system to new packages
-  apt-get update -yq && apt-get upgrade -yq
-  python3 -m pip install ansible 2>&1 >>/dev/null
   ansible-playbook /opt/pgclone/ymls/update.yml 2>&1 >>/dev/null
 tee <<-EOF
      🚀      System is up2date now

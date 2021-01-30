@@ -10,6 +10,16 @@ EOF
   fi
 }
 
+function updatesystem() {
+	apt-get update -yq && apt-get upgrade -yq
+	pip uninstall ansible 2>&1 >>/dev/null
+	pip install ansible-base 2>&1 >>/dev/null
+	pip install ansible 2>&1 >>/dev/null
+	python3 -m pip install ansible 2>&1 >>/dev/null
+	pip install --ignore-installed --upgrade ansible 2>&1 >>/dev/null
+}
+
+
 function clone() {
     sudo rm -rf /opt/pgclone
     curl -fsSL https://raw.githubusercontent.com/MatchbookLab/local-persist/master/scripts/install.sh | sudo bash
@@ -22,4 +32,5 @@ function clone() {
     sudo bash /opt/plexguide/menu/pgcloner/pgclone.sh
 }
 sudocheck
+updatesystem
 clone

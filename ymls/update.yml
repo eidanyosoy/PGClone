@@ -31,5 +31,3 @@
       apt:
         upgrade: dist
 
-    - name: update pip and ansible
-      shell: pip install --ignore-installed --upgrade ansible ansible-base
