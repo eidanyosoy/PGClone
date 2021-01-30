@@ -221,8 +221,8 @@ clonestartactions() {
         3) publicsecretchecker && passwordcheck && echo "gdrive" >/var/plexguide/rclone/deploy.version && oauth ;;
         z) exit ;;
         Z) exit ;;
-        a) publicsecretchecker && passwordcheck &&  deploypgmove ;;
-        A) publicsecretchecker && passwordcheck &&  deploypgmove ;;
+        a) publicsecretchecker && passwordcheck && deploypgmove ;;
+        A) publicsecretchecker && passwordcheck && deploypgmove ;;
         D) publicsecretchecker && passwordcheck && deploydockeruploader ;;
         d) publicsecretchecker && passwordcheck && deploydockeruploader ;;
         M) publicsecretchecker && passwordcheck && deploydockermount ;;
@@ -248,8 +248,8 @@ clonestartactions() {
         A) publicsecretchecker && tlabelchecker && deploypgblitz ;;
         D) publicsecretchecker && tlabelchecker && deploydockeruploader ;;
         d) publicsecretchecker && tlabelchecker && deploydockeruploader ;;
-        D) publicsecretchecker && tlabelchecker && deploydockermount ;;
-        d) publicsecretchecker && tlabelchecker && deploydockermount ;;
+        M) publicsecretchecker && tlabelchecker && deploydockermount ;;
+        m) publicsecretchecker && tlabelchecker && deploydockermount ;;
         b) publicsecretchecker &&  keybackup ;;
         B) publicsecretchecker &&  keybackup ;;
         o) optionsmenu ;;
