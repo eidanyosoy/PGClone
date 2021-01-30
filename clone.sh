@@ -11,12 +11,18 @@ EOF
 }
 
 function updatesystem() {
+    tee <<-EOF
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⛔️  This can take a while
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EOF
+    sleep 5
 	apt-get update -yq && apt-get upgrade -yq
-	pip uninstall ansible 2>&1 >>/dev/null
-	pip install ansible-base 2>&1 >>/dev/null
-	pip install ansible 2>&1 >>/dev/null
-	python3 -m pip install ansible 2>&1 >>/dev/null
-	pip install --ignore-installed --upgrade ansible 2>&1 >>/dev/null
+	pip uninstall ansible
+	pip install ansible-base
+	pip install ansible
+	python3 -m pip install ansible
+	pip install --ignore-installed --upgrade ansible
 }
 
 
