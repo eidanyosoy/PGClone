@@ -24,6 +24,24 @@ deploypgblitz() {
   cat /opt/appdata/plexguide/.keys >>/opt/appdata/plexguide/rclone.conf
   deploydrives
 }
+dockervolumen() {
+dovolcheck=$(docker volume ls | grep unionfs)
+if [[ "$dovolcheck" == "unionfs" ]]; then
+tee <<-EOF
+     🚀      Docker Volume exist | skipping
+EOF
+else
+tee <<-EOF
+     🚀      Creating Docker Volume 
+     🚀      this can take a long time  
+EOF
+curl -fsSL https://raw.githubusercontent.com/MatchbookLab/local-persist/master/scripts/install.sh | sudo bash
+docker volume create -d local-persist -o mountpoint=/mnt --name=unionfs 
+tee <<-EOF
+     🚀      Creating Docker created
+EOF
+fi
+}
 updatesystem() {
 tee <<-EOF
      🚀      System will be updated now 
@@ -82,6 +100,7 @@ EOF
    removeoldui
    cleanlogs
    stopmunts
+   dockervolumen
    ansible-playbook /opt/pgclone/ymls/remove-2.yml
    ansible-playbook /opt/pgclone/ymls/mounts.yml
    clonestart
@@ -116,6 +135,8 @@ EOF
    update_pip
    updatesystem
    removeoldui
+   stopmunts
+   dockervolumen
    cleanlogs
    ansible-playbook /opt/pgclone/ymls/uploader.yml
   read -rp '↘️  Acknowledge Info | Press [ENTER] ' typed </dev/tty
@@ -149,6 +170,7 @@ EOF
     multihdreadonly
     updatesystem
     stopmunts
+	dockervolumen
     deploydockermount
     deploydockeruploader
   elif [[ "$transport" == "be" ]]; then
@@ -156,6 +178,7 @@ EOF
     multihdreadonly
     updatesystem
     stopmunts
+	dockervolumen
     deploydockermount
     deploydockeruploader
   fi
