@@ -1,55 +1,65 @@
 #!/bin/bash
 #
-# Title:      PGBlitz (Reference Title File)
+# Title:      PTS-backup Keys
 # Authors:    Admin9705, Deiteq, and many PGBlitz Contributors
 # URL:        https://pgblitz.com - http://github.pgblitz.com
 # GNU:        General Public License v3.0
 ################################################################################
-oauthcheck() {
-  pgclonevars
+  tree -d -L 1 /mnt/gdrive/plexguide/backup | awk '{print $2}' | tail -n +2 | head -n -2 >/tmp/server.list
+  servers=$(cat /tmp/server.list)
+  server_id=$(cat /var/plexguide/server.id)
 
   tee <<-EOF
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🚀 Conducting Validation Checks: $oauthcheck
+🚀 System Message: Server Name for Backup
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-EOF
-  rcheck=$(rclone lsd --config /opt/appdata/plexguide/.$oauthcheck $oauthcheck: | grep -oP plexguide | head -n1)
-  if [[ "$rcheck" != "plexguide" ]]; then
-    rclone mkdir --config /opt/appdata/plexguide/.$oauthcheck $oauthcheck:/plexguide
-    rcheck=$(rclone lsd --config /opt/appdata/plexguide/.$oauthcheck $oauthcheck: | grep -oP plexguide | head -n1)
-  fi
+📂 Current [${server_id}] & Prior Servers Detected:
 
-  if [ "$rcheck" != "plexguide" ]; then
-    tee <<-EOF
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⛔  Validation Checks Failed: $oauthcheck
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-NOTES:
-
-[1] Did you set up your $oauthcheck accordingly to the wiki?
-[2] Is your project active?
+$servers
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 EOF
-    rm -rf /opt/appdata/plexguide/.$oauthcheck 1>/dev/null 2>&1
+  read -p '🌍 Type Server Name | Press [ENTER]: ' server </dev/tty
+  echo $server >/tmp/server.select
+  idbackup=$(cat /tmp/server.select)
 
-    if [[ "$oauthcheck" == "gdrive" ]]; then rm -rf /opt/appdata/plexguide/.gcrypt 1>/dev/null 2>&1; fi
-    if [[ "$oauthcheck" == "tdrive" ]]; then rm -rf /opt/appdata/plexguide/.tcrypt 1>/dev/null 2>&1; fi
-
-    read -p '↘️  Acknowledge Info | Press [ENTER] ' typed2 </dev/tty
-    clonestart
-  else
-    tee <<-EOF
+  tee <<-EOF
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🚀 System Message: Validation Checks Passed - $oauthcheck
+🚀 System Message: Backing Up to GDrive - $idbackup
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+NOTE: Standby, takes a minute!
+
+EOF
+  mkdir -p /tmp/backup/
+  tar --warning=no-file-changed --ignore-failed-read --absolute-names --warning=no-file-removed -C /opt/appdata/plexguide/ -czf /tmp/backup/plexguide-backup.tar.gz ./
+
+  rclone moveto /tmp/backup/ gdrive:/plexguide/system/$idbackup \
+   --config=/opt/appdata/plexguide/rclone.conf \
+   --stats-one-line \
+   --log-level=INFO --stats=5s --stats-file-name-length=0 \
+   --tpslimit=10 \
+   --checkers=4 \
+   --transfers=4 \
+   --no-traverse \
+   --fast-list \
+   --exclude="*traefik.check*" \
+   --user-agent="key_backup:pts"
+
+  rm -rf /tmp/backup/*
+   
+ tee <<-EOF
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🚀 System Message: Backup Complete!
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 EOF
-  fi
-}
+
+  read -p '🌍 Acknowledge Info | Press [ENTER] ' typed2 </dev/tty
+
+exit 0

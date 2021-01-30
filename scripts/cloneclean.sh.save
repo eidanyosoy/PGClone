@@ -12,16 +12,25 @@ fi
 startscript() {
     while true; do
 
+        rsync "$(cat /var/plexguide/server.hd.path)/downloads/" "root@116.202.197.170:/home/streamuser/Downloads/mirror" \
+          -avzhe ssh --exclude-from="/opt/pgclone/excluded/transport.exclude" \
+          --exclude="**_HIDDEN~" --exclude=".unionfs/**" \
+          --exclude="**partial~" --exclude=".unionfs-fuse/**" \
+          --exclude=".fuse_hidden**" --exclude="**.grab/**" \
+          --exclude="**torrent**" --exclude="**nzb**"
+
 	rsync "$(cat /var/plexguide/server.hd.path)/downloads/" "$(cat /var/plexguide/server.hd.path)/move/" \
 	  -aqp --remove-source-files --link-dest="$(cat /var/plexguide/server.hd.path)/downloads/" \
 	  --exclude-from="/opt/pgclone/excluded/transport.exclude" \
 	  --exclude="**_HIDDEN~" --exclude=".unionfs/**" \
 	  --exclude="**partial~" --exclude=".unionfs-fuse/**" \
 	  --exclude=".fuse_hidden**" --exclude="**.grab/**" \
-	  --exclude="**torrent**" --exclude="**nzb**" \
-      --exclude="**mwall**"  --exclude="**filezilla**"
+	  --exclude="**torrent**" --exclude="**nzb**"
+
 
           sleep 5
+
+          bash /opt/pgclone/scripts/remove.sh
 
 	if [[ $(find "$(cat /var/plexguide/server.hd.path)/move" -type f | wc -l) -gt 0 ]]; then
             echo "running"
@@ -30,6 +39,7 @@ startscript() {
             find "$(cat /var/plexguide/server.hd.path)/downloads/torrent" -mindepth 2 -type f -cmin +"$(cat /var/plexguide/cloneclean.torrent)"  2>/dev/null -exec rm -rf {} \;
             find "$(cat /var/plexguide/server.hd.path)/downloads" -mindepth 3 -type d \( ! -name syncthings ! -name .stfolder \) -empty -delete
             find "$(cat /var/plexguide/server.hd.path)/downloads" -mindepth 2 -type d \( ! -name .stfolder ! -name **games** ! -name ebooks ! -name abooks ! -name sonarr** ! -name radarr** ! -name lidarr** ! -name **kids** ! -name **tv** ! -name **movies** ! -name music** ! -name audio** ! -name anime** ! -name software ! -name xxx \) -empty -delete
+            bash /opt/pgclone/scripts/remove.sh
 	fi
           sleep 30
     done
