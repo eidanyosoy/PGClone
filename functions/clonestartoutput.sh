@@ -157,10 +157,13 @@ EOF
 		dockerstatusuploader
 		dockerstatusmount
         tee <<-EOF
+____________________________________________________
+Docker Status :
+Uploader               [ $dstatus ] - [ $output ]
+Mount                  [ $mstatus ] - [ $output ]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-[A] Deploy Mounts            [ $outputversion ]
-[D] Deploy Docker Uploader   [ $dstatus ] - [ $outputupp ]
-[M} Deploy Docker Mount      [ $mstatus ] - [ $outputmount ]
+[A] Deploy Mounts and Uploader    [ $outputversion ]
+
 [O] Options
 
 [B] Backup Rclone Settings
@@ -203,12 +206,8 @@ clonestartactions() {
         2)  publicsecretchecker && echo "gdrive" >/var/plexguide/rclone/deploy.version && oauth ;;
         z)  exit ;;
         Z)  exit ;;
-        a) publicsecretchecker &&  deploypgmove ;;
-        A) publicsecretchecker &&  deploypgmove ;;
-        D) publicsecretchecker && deploydockeruploader ;;
-        d) publicsecretchecker && deploydockeruploader ;;
-        M) publicsecretchecker && deploydockermount ;;
-        m) publicsecretchecker && deploydockermount ;;
+        a) publicsecretchecker && deploypgmove ;;
+        A) publicsecretchecker && deploypgmove ;;
         o) optionsmenumove ;;
         O) optionsmenumove ;;
         *) clonestart ;;
@@ -223,10 +222,6 @@ clonestartactions() {
         Z) exit ;;
         a) publicsecretchecker && passwordcheck && deploypgmove ;;
         A) publicsecretchecker && passwordcheck && deploypgmove ;;
-        D) publicsecretchecker && passwordcheck && deploydockeruploader ;;
-        d) publicsecretchecker && passwordcheck && deploydockeruploader ;;
-        M) publicsecretchecker && passwordcheck && deploydockermount ;;
-        m) publicsecretchecker && passwordcheck && deploydockermount ;;
         o) optionsmenumove ;;
         O) optionsmenumove ;;
         *) clonestart ;;
@@ -246,10 +241,6 @@ clonestartactions() {
         Z) exit ;;
         a) publicsecretchecker && tlabelchecker && deploypgblitz ;;
         A) publicsecretchecker && tlabelchecker && deploypgblitz ;;
-        D) publicsecretchecker && tlabelchecker && deploydockeruploader ;;
-        d) publicsecretchecker && tlabelchecker && deploydockeruploader ;;
-        M) publicsecretchecker && tlabelchecker && deploydockermount ;;
-        m) publicsecretchecker && tlabelchecker && deploydockermount ;;
         b) publicsecretchecker &&  keybackup ;;
         B) publicsecretchecker &&  keybackup ;;
         o) optionsmenu ;;
@@ -272,10 +263,6 @@ clonestartactions() {
         Z) exit ;;
         a) publicsecretchecker && passwordcheck && tlabelchecker && deploypgblitz ;;
         A) publicsecretchecker && passwordcheck && tlabelchecker && deploypgblitz ;;
-        D) publicsecretchecker && passwordcheck && tlabelchecker && deploydockeruploader ;;
-        d) publicsecretchecker && passwordcheck && tlabelchecker && deploydockeruploader ;;
-        m) publicsecretchecker && passwordcheck && tlabelchecker && deploydockermount ;;
-        M) publicsecretchecker && passwordcheck && tlabelchecker && deploydockermount ;;
         b) publicsecretchecker && passwordcheck &&  keybackup ;;
         B) publicsecretchecker && passwordcheck &&  keybackup ;;
         o) optionsmenu ;;

@@ -24,6 +24,21 @@ deploypgblitz() {
   cat /opt/appdata/plexguide/.keys >>/opt/appdata/plexguide/rclone.conf
   deploydrives
 }
+deploypgmove() {
+  # RCLONE BUILD
+  echo "#------------------------------------------" >/opt/appdata/plexguide/rclone.conf
+  echo "# rClone.config created over rclone " >>/opt/appdata/plexguide/rclone.conf
+  echo "#------------------------------------------" >>/opt/appdata/plexguide/rclone.conf
+
+  cat /opt/appdata/plexguide/.gdrive >/opt/appdata/plexguide/rclone.conf
+
+  if [[ $(cat "/opt/appdata/plexguide/.gcrypt") != "NOT-SET" ]]; then
+    echo ""
+    cat /opt/appdata/plexguide/.gcrypt >>/opt/appdata/plexguide/rclone.conf
+  fi
+  deploydrives
+}
+
 dockervolumen() {
 dovolcheck=$(docker volume ls | grep unionfs)
 if [[ "$dovolcheck" == "unionfs" ]]; then
