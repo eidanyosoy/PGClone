@@ -23,6 +23,7 @@ EOF
 	pip install ansible
 	python3 -m pip install ansible
 	pip install --ignore-installed --upgrade ansible
+	clone
 }
 
 
@@ -39,4 +40,3 @@ function clone() {
 }
 sudocheck
 updatesystem
-clone
