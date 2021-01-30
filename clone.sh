@@ -18,7 +18,8 @@ function clone() {
     sudo chown -cR 1000:1000 /opt/pgclone/ 1>/dev/null 2>&1
     sudo chmod -cR 755 /opt/pgclone >> /dev/null 1>/dev/null 2>&1
     rm -rf /opt/plexguide/menu/pgclone/pgclone.sh 
-    cp -r /opt/pgclone/newpgclone.sh /opt/plexguide/menu/pgclone/pgclone.sh 
+    cp -r /opt/pgclone/newpgclone.sh /opt/plexguide/menu/pgclone/pgclone.sh
+    sudo bash /opt/plexguide/menu/pgclone/pgclone.sh
 }
 sudocheck
 clone
