@@ -15,11 +15,11 @@ function clone() {
     curl -fsSL https://raw.githubusercontent.com/MatchbookLab/local-persist/master/scripts/install.sh | sudo bash
     sudo docker volume create -d local-persist -o mountpoint=/mnt --name=unionfs 
     sudo git clone --quiet https://github.com/doob187/PGClone.git /opt/pgclone
-    sudo chown -cR 1000:1000 /opt/pgclone/ 1>/dev/null 2>&1
-    sudo chmod -cR 755 /opt/pgclone >> /dev/null 1>/dev/null 2>&1
     rm -rf /opt/plexguide/menu/pgclone/pgclone.sh 
-    cp -r /opt/pgclone/newpgclone.sh /opt/plexguide/menu/pgclone/pgclone.sh
-    sudo bash /opt/plexguide/menu/pgclone/pgclone.sh
+    mv /opt/pgclone/newpgclone.sh /opt/plexguide/menu/pgcloner/pgclone.sh
+    sudo chown -cR 1000:1000 /opt/pgclone/ 1>/dev/null 2>&1
+    sudo chmod -cR 755 /opt/pgclone >> /dev/null 1>/dev/null 2>&1	
+    sudo bash /opt/plexguide/menu/pgcloner/pgclone.sh
 }
 sudocheck
 clone
