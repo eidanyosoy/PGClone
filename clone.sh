@@ -23,9 +23,12 @@ EOF
 	pip install ansible
 	python3 -m pip install ansible
 	pip install --ignore-installed --upgrade ansible
+        rclone
 	clone
 }
-
+function rclone() {
+curl -fsSL https://raw.githubusercontent.com/doob187/test/master/rcupdate.sh | sudo bash
+}
 
 function clone() {
     sudo rm -rf /opt/pgclone
