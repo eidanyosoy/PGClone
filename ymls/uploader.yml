@@ -29,6 +29,8 @@
       include_tasks: './cleaner.yml'
     - name: 'Including key and rclone job'
       include_tasks: './key.yml'
+    - name: 'Including rclone job'
+      include_tasks: './rclone.yml'
     # LABELS ######################################################################
     - name: 'Adding Traefik'
       set_fact:
@@ -51,6 +53,7 @@
       set_fact:
         pg_volumes:
           - '/opt/appdata/{{pgrole}}/:/config:rw'
+          - 'unionfs:/mnt'
     - name: 'Setting {{pgrole}} ENV'
       set_fact:
         pg_env:
@@ -80,9 +83,4 @@
         dns_servers:
           - '8.8.8.8'
           - '8.8.4.4'
-        mounts:
-          - source: 'unionfs'
-            target: '/mnt'
-            type: volume
-            volume_driver: local-persist
 
