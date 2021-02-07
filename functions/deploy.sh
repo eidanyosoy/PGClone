@@ -24,6 +24,21 @@ deploypgblitz() {
   cat /opt/appdata/plexguide/.keys >>/opt/appdata/plexguide/rclone.conf
   deploydrives
 }
+deploypgmove() {
+  # RCLONE BUILD
+  echo "#------------------------------------------" >/opt/appdata/plexguide/rclone.conf
+  echo "# rClone.config created over rclone " >>/opt/appdata/plexguide/rclone.conf
+  echo "#------------------------------------------" >>/opt/appdata/plexguide/rclone.conf
+
+  cat /opt/appdata/plexguide/.gdrive >/opt/appdata/plexguide/rclone.conf
+
+  if [[ $(cat "/opt/appdata/plexguide/.gcrypt") != "NOT-SET" ]]; then
+    echo ""
+    cat /opt/appdata/plexguide/.gcrypt >>/opt/appdata/plexguide/rclone.conf
+  fi
+  deploydrives
+}
+
 dockervolumen() {
 dovolcheck=$(docker volume ls | grep unionfs)
 if [[ "$dovolcheck" == "unionfs" ]]; then
@@ -48,12 +63,6 @@ tee <<-EOF
 	         this can take a long time  
 EOF
   # update system to new packages
-  apt-get update -yq && apt-get upgrade -yq
-  pip uninstall ansible 2>&1 >>/dev/null
-  pip install ansible-base 2>&1 >>/dev/null
-  pip install ansible 2>&1 >>/dev/null
-  python3 -m pip install ansible 2>&1 >>/dev/null
-  pip install --ignore-installed --upgrade ansible 2>&1 >>/dev/null
   ansible-playbook /opt/pgclone/ymls/update.yml 2>&1 >>/dev/null
 tee <<-EOF
      🚀      System is up2date now
@@ -93,14 +102,6 @@ deploydockermount() {
 tee <<-EOF
      🚀      Deploy of Docker Mounts
 EOF
-   vnstat
-   #norcloneconf
-   update_pip
-   updatesystem
-   removeoldui
-   cleanlogs
-   stopmunts
-   dockervolumen
    ansible-playbook /opt/pgclone/ymls/remove-2.yml
    ansible-playbook /opt/pgclone/ymls/mounts.yml
    clonestart
@@ -130,13 +131,6 @@ tee <<-EOF
      🚀  Deploy of Docker Uploader
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 EOF
-   vnstat
-   #norcloneconf
-   update_pip
-   updatesystem
-   removeoldui
-   stopmunts
-   dockervolumen
    cleanlogs
    ansible-playbook /opt/pgclone/ymls/uploader.yml
   read -rp '↘️  Acknowledge Info | Press [ENTER] ' typed </dev/tty
@@ -144,10 +138,6 @@ tee <<-EOF
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
      💪     DEPLOYED sucessfully !
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-     The Uploader is under
-     https://uploader.${domain}
-     or
-     http://${ip}:7777
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 EOF
     read -p '↘️  Acknowledge Info | Press [ENTER] ' typed2 </dev/tty
@@ -161,53 +151,18 @@ tee <<-EOF
       🚀 Conducting RClone Mount Checks
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 EOF
-
-  if [ -e "/var/plexguide/.drivelog" ]; then rm -rf /var/plexguide/.drivelog; fi
-  touch /var/plexguide/.drivelog
-  transport=$(cat /var/plexguide/pgclone.transport)
-  if [[ "$transport" == "bu" ]]; then
+    vnstat
+    #norcloneconf
+    removeoldui
+    cleanlogs
+    stopmunts
     testdrive
     multihdreadonly
     updatesystem
     stopmunts
-	dockervolumen
+    dockervolumen
+    deploydockeruploader	
     deploydockermount
-    deploydockeruploader
-  elif [[ "$transport" == "be" ]]; then
-    testdrive
-    multihdreadonly
-    updatesystem
-    stopmunts
-	dockervolumen
-    deploydockermount
-    deploydockeruploader
-  fi
-  cat /var/plexguide/.drivelog
-  logcheck=$(cat /var/plexguide/.drivelog | grep "Failed")
-  if [[ "$logcheck" == "" ]]; then
-     if [[ "$transport" == "bu" || "$transport" == "be" ]]; then executeblitz; fi
-  else
-    if [[ "$transport" == "me" || "$transport" == "be" ]]; then
-      emessage="
-  NOTE1: User forgot to share out GDSA E-Mail to Team Drive
-  NOTE2: Conducted a blitz key restore and keys are no longer valid
-  "
-    fi
-    tee <<-EOF
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  🚀 RClone Mount Checks - Failed
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  CANNOT DEPLOY!
-
-  POSSIBLE REASONS:
-  1. GSuite Account is no longer valid or suspended
-  2. Client ID and/or Secret are invalid and/or no longer exist
-  $emessage
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-EOF
-  read -p '↘️  Acknowledge Info | Press [ENTER] ' typed2 </dev/tty
-    clonestart
-  fi
 }
 
 ########################################################################################
@@ -222,7 +177,7 @@ config=/opt/appdata/plexguide/rclone.conf
 mapfile -t mounttest < <(eval rclone listremotes --config=${config} | grep "$filter" | sed '/pgunion/d')
 for i in ${mounttest[@]}; do
     rclone lsd --config=${config} $i | head -n1
-	echo "$i = Passed"
+    echo "$i = Passed"
 done
 }
 ################################################################################
@@ -268,13 +223,6 @@ deploySuccessUploader() {
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   rClone has been deployed sucessfully!
   All services are active and running normally.
-
-  The Uploader is under
-
-     https://uploader.$(cat /var/plexguide/server.domain)
-     or
-     http://$(cat /var/plexguide/server.ip):7777
-
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 EOF
   read -rp '↘️  Acknowledge Info | Press [ENTER] ' typed </dev/tty

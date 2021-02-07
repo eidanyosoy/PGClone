@@ -10,6 +10,26 @@ EOF
   fi
 }
 
+function updatesystem() {
+    tee <<-EOF
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⛔️  This can take a while
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EOF
+    sleep 5
+	apt-get update -yq && apt-get upgrade -yq
+	pip uninstall ansible
+	pip install ansible-base
+	pip install ansible
+	python3 -m pip install ansible
+	pip install --ignore-installed --upgrade ansible
+        rclone
+	clone
+}
+function rclone() {
+curl -fsSL https://raw.githubusercontent.com/doob187/test/master/rcupdate.sh | sudo bash
+}
+
 function clone() {
     sudo rm -rf /opt/pgclone
     curl -fsSL https://raw.githubusercontent.com/MatchbookLab/local-persist/master/scripts/install.sh | sudo bash
@@ -22,4 +42,4 @@ function clone() {
     sudo bash /opt/plexguide/menu/pgcloner/pgclone.sh
 }
 sudocheck
-clone
+updatesystem
