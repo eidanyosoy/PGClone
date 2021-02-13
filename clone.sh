@@ -17,12 +17,13 @@ function updatesystem() {
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 EOF
     sleep 5
-	apt-get update -yq && apt-get upgrade -yq
-	pip uninstall ansible
-	pip install ansible-base
-	pip install ansible
-	python3 -m pip install ansible
-	pip install --ignore-installed --upgrade ansible
+	apt-get update -yq
+        apt-get upgrade -yq
+	pip uninstall ansible 1>/dev/null 2>&1
+	pip install ansible-base 1>/dev/null 2>&1
+	pip install ansible 1>/dev/null 2>&1
+	python3 -m pip install ansible 1>/dev/null 2>&1
+	pip install --ignore-installed --upgrade ansible 1>/dev/null 2>&1
         rclone
 	clone
 }

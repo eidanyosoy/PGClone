@@ -163,6 +163,7 @@ EOF
     dockervolumen
     deploydockeruploader	
     deploydockermount
+    deploySuccessUploader
 }
 
 ########################################################################################

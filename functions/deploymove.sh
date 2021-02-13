@@ -31,12 +31,11 @@ executemove() {
         type=gcrypt
         ansible-playbook /opt/pgclone/ymls/drive.yml -e "drive=gcrypt"
     fi
-    # deploy union
-    ansible-playbook /opt/pgclone/ymls/uploader.yml
     # output final display
     if [[ "$type" == "gdrive" ]]; then
         finaldeployoutput="Move - Unencrypted"
     else finaldeployoutput="Move - Encrypted"; fi
-    deploySuccessUploader && deploymountSuccess
+    deploydrives
+
 	
 }

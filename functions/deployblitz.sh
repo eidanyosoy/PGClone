@@ -43,8 +43,5 @@ executeblitz() {
         echo $p >/var/plexguide/.blitztemp
         if [[ "$(grep "GDSA" /var/plexguide/.blitztemp)" != "" ]]; then echo $p >>/var/plexguide/.blitzfinal; fi
     done </var/plexguide/.blitzlist
-    # deploy union
-    ansible-playbook /opt/pgclone/ymls/uploader.yml
-    # check if services are active and running
-    deploySuccessUploader && deploymountSuccess
+    deploydrives
 }
