@@ -104,7 +104,6 @@ tee <<-EOF
 EOF
    ansible-playbook /opt/pgclone/ymls/remove-2.yml
    ansible-playbook /opt/pgclone/ymls/mounts.yml
-   clonestart
 }
 norcloneconf() {
 rcc=/opt/appdata/plexguide/rclone.conf
@@ -126,26 +125,16 @@ else
 fi
 }
 deploydockeruploader() {
-tee <<-EOF
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-     🚀  Deploy of Docker Uploader
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-EOF
-   cleanlogs
-   ansible-playbook /opt/pgclone/ymls/uploader.yml
-  read -rp '↘️  Acknowledge Info | Press [ENTER] ' typed </dev/tty
+ansible-playbook /opt/pgclone/ymls/uploader.yml
 tee <<-EOF
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
      💪     DEPLOYED sucessfully !
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 EOF
-    read -p '↘️  Acknowledge Info | Press [ENTER] ' typed2 </dev/tty
-    clonestart
 }
 ### Docker Uploader Deploy end ##
 deploydrives() {
-  fail=0
 tee <<-EOF
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
       🚀 Conducting RClone Mount Checks
@@ -163,7 +152,8 @@ EOF
     dockervolumen
     deploydockeruploader	
     deploydockermount
-    deploySuccessUploader
+    doneokay
+    clonestart
 }
 
 ########################################################################################
@@ -215,27 +205,4 @@ cleanlogs() {
 prunedocker() {
   echo "Prune docker images and volumes..."
   docker system prune --volumes -f
-}
-################################################################################
-deploySuccessUploader() {
-  tee <<-EOF
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-💪 DEPLOYED: $finaldeployoutput
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  rClone has been deployed sucessfully!
-  All services are active and running normally.
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-EOF
-  read -rp '↘️  Acknowledge Info | Press [ENTER] ' typed </dev/tty
-}
-deploymountSuccess() {
-  tee <<-EOF
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-💪 DEPLOYED: $finaldeployoutput
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  rClone has been deployed sucessfully!
-  All services are active and running normally.
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-EOF
-  read -rp '↘️  Acknowledge Info | Press [ENTER] ' typed </dev/tty
 }
