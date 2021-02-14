@@ -18,22 +18,22 @@ executeblitz() {
     # flush and clear service logs
     cleanlogs
     # to remove all service running prior to ensure a clean launch
-    ansible-playbook /opt/pgclone/ymls/remove.yml
+    ansible-playbook /opt/pgclone/ymls/remove.yml 1>/dev/null 2>&1
     # gdrive deploys by standard
     echo "tdrive" >/var/plexguide/deploy.version
     echo "bu" >/var/plexguide/deployed.version
     type=gdrive
     encryptbit=""
-    ansible-playbook /opt/pgclone/ymls/drive.yml -e "drive=gdrive"
+    ansible-playbook /opt/pgclone/ymls/drive.yml -e "drive=gdrive" 1>/dev/null 2>&1
     type=tdrive
-    ansible-playbook /opt/pgclone/ymls/drive.yml -e "drive=tdrive"
+    ansible-playbook /opt/pgclone/ymls/drive.yml -e "drive=tdrive" 1>/dev/null 2>&1
     # deploy only if using encryption
     if [[ "$(cat /var/plexguide/pgclone.transport)" == "be"  ]]; then
-        ansible-playbook /opt/pgclone/ymls/drive.yml -e "drive=gcrypt"
+        ansible-playbook /opt/pgclone/ymls/drive.yml -e "drive=gcrypt" 1>/dev/null 2>&1
         echo "be" >/var/plexguide/deployed.version
         type=tcrypt
         encryptbit="C"
-        ansible-playbook /opt/pgclone/ymls/drive.yml -e "drive=tcrypt"
+        ansible-playbook /opt/pgclone/ymls/drive.yml -e "drive=tcrypt" 1>/dev/null 2>&1
     fi
     # builds the list
     ls -la /opt/appdata/plexguide/.blitzkeys/ | awk '{print $9}' | tail -n +4 | sort | uniq >/var/plexguide/.blitzlist
