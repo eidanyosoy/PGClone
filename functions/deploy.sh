@@ -63,7 +63,7 @@ tee <<-EOF
 	     this can take a long time  
 EOF
   # update system to new packages
-  ansible-playbook /opt/pgclone/ymls/update.yml 1>/dev/null 2>&1
+   ansible-playbook /opt/pgclone/ymls/update.yml 1>/dev/null 2>&1
 tee <<-EOF
      🚀      System is up2date now
 EOF
@@ -87,7 +87,7 @@ if [[ "$UI" == "pgui" ]]; then
 fi
 }
 update_pip() {
-pip3 list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1 | xargs -n1 pip3 install -U
+pip3 list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1 | xargs -n1 pip3 install -U 1>/dev/null 2>&1
 }
 vnstat() {
   apt-get install ethtool vnstat vnstati -yqq 2>&1 >>/dev/null
@@ -202,10 +202,10 @@ EOF
 ################################################################################
 cleanlogs() {
   echo "Prune service logs..."
-  journalctl --flush
-  journalctl --rotate
-  journalctl --vacuum-time=1s
-  truncate -s 0 /var/plexguide/logs/*.log
+  journalctl --flush 1>/dev/null 2>&1
+  journalctl --rotate 1>/dev/null 2>&1
+  journalctl --vacuum-time=1s 1>/dev/null 2>&1
+  truncate -s 0 /var/plexguide/logs/*.log 1>/dev/null 2>&1
   rm -rf /var/plexguide/logs/ 1>/dev/null 2>&1
   find /var/logs -name "*.gz" -delete 1>/dev/null 2>&1
 }
