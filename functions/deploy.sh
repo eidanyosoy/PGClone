@@ -47,23 +47,23 @@ tee <<-EOF
 EOF
 else
 tee <<-EOF
-     🚀      Creating Docker Volume 
+     🚀      Creating Docker Volume starting
      🚀      this can take a long time  
 EOF
 curl -fsSL https://raw.githubusercontent.com/MatchbookLab/local-persist/master/scripts/install.sh | sudo bash
-docker volume create -d local-persist -o mountpoint=/mnt --name=unionfs 
+docker volume create -d local-persist -o mountpoint=/mnt --name=unionfs 1>/dev/null 2>&1
 tee <<-EOF
-     🚀      Creating Docker created
+     🚀      Creating Docker Volume created
 EOF
 fi
 }
 updatesystem() {
 tee <<-EOF
      🚀      System will be updated now 
-	         this can take a long time  
+	     this can take a long time  
 EOF
   # update system to new packages
-  ansible-playbook /opt/pgclone/ymls/update.yml 2>&1 >>/dev/null
+  ansible-playbook /opt/pgclone/ymls/update.yml 1>/dev/null 2>&1
 tee <<-EOF
      🚀      System is up2date now
 EOF
@@ -71,39 +71,45 @@ EOF
 stopmunts() {
 mount=$(docker ps --format '{{.Names}}' | grep "mount")
 if [[ "$mount" == "mount" ]]; then 
-   docker stop mount >> /dev/null
-   fusermount -uzq /mnt/unionfs >> /dev/null
+   docker stop mount 1>/dev/null 2>&1
+   fusermount -uzq /mnt/unionfs 1>/dev/null 2>&1
+else
+   fusermount -uzq /mnt/unionfs 1>/dev/null 2>&1
 fi
+
 }
 removeoldui() {
 UI=$(docker ps --format '{{.Names}}' | grep "pgui")
 if [[ "$UI" == "pgui" ]]; then 
-   docker stop pgui >> /dev/null
-   docker rm pgui >> /dev/null
-   rm -rf /opt/appdata/pgui/ >> /dev/null
+   docker stop pgui 1>/dev/null 2>&1
+   docker rm pgui 1>/dev/null 2>&1
+   rm -rf /opt/appdata/pgui/ 1>/dev/null 2>&1
 fi
 }
 update_pip() {
 pip3 list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1 | xargs -n1 pip3 install -U
 }
 vnstat() {
-apt-get install ethtool vnstat vnstati -yqq 2>&1 >>/dev/null
-export DEBIAN_FRONTEND=noninteractive
-network=$(ifconfig | grep -E 'eno1|enp|ens5' | awk '{print $1}' | sed -e 's/://g')
-sed -i 's/eth0/'$network'/g' /etc/vnstat.conf
-sed -i '/UseLogging/s/2/0/' /etc/vnstat.conf
-sed -i '/RateUnit/s/1/0/' /etc/vnstat.conf
-sed -i '/UnitMode/s/0/1/' /etc/vnstat.conf
-sed -i 's/Locale "-"/Locale "LC_ALL=en_US.UTF-8"/g' /etc/vnstat.conf
-/etc/init.d/vnstat restart 2>&1 >>/dev/null
+  apt-get install ethtool vnstat vnstati -yqq 2>&1 >>/dev/null
+     export DEBIAN_FRONTEND=noninteractive
+     network=$(ifconfig | grep -E 'eno1|enp|ens5' | awk '{print $1}' | sed -e 's/://g')
+     sed -i 's/eth0/'$network'/g' /etc/vnstat.conf
+     sed -i '/UseLogging/s/2/0/' /etc/vnstat.conf
+     sed -i '/RateUnit/s/1/0/' /etc/vnstat.conf
+     sed -i '/UnitMode/s/0/1/' /etc/vnstat.conf
+     sed -i 's/Locale "-"/Locale "LC_ALL=en_US.UTF-8"/g' /etc/vnstat.conf
+     /etc/init.d/vnstat restart 1>/dev/null 2>&1
 }
 
 deploydockermount() {
 tee <<-EOF
-     🚀      Deploy of Docker Mounts
+     🚀      Deploy of Docker Mounts started
 EOF
-   ansible-playbook /opt/pgclone/ymls/remove-2.yml
-   ansible-playbook /opt/pgclone/ymls/mounts.yml
+   ansible-playbook /opt/pgclone/ymls/remove-2.yml 1>/dev/null 2>&1
+   ansible-playbook /opt/pgclone/ymls/mounts.yml 1>/dev/null 2>&1
+tee <<-EOF
+     🚀      Deploy of Docker Mounts done
+EOF
 }
 norcloneconf() {
 rcc=/opt/appdata/plexguide/rclone.conf
@@ -125,7 +131,7 @@ else
 fi
 }
 deploydockeruploader() {
-ansible-playbook /opt/pgclone/ymls/uploader.yml
+ansible-playbook /opt/pgclone/ymls/uploader.yml 1>/dev/null 2>&1
 tee <<-EOF
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
      💪     DEPLOYED sucessfully !
@@ -141,13 +147,14 @@ tee <<-EOF
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 EOF
     vnstat
-    #norcloneconf
+    norcloneconf
     removeoldui
     cleanlogs
     stopmunts
     testdrive
     multihdreadonly
     updatesystem
+    update_pip
     stopmunts
     dockervolumen
     deploydockeruploader	
@@ -199,10 +206,10 @@ cleanlogs() {
   journalctl --rotate
   journalctl --vacuum-time=1s
   truncate -s 0 /var/plexguide/logs/*.log
-  rm -rf /var/plexguide/logs/ >>/dev/null 2>&1
-  find /var/logs -name "*.gz" -delete >>/dev/null 2>&1
+  rm -rf /var/plexguide/logs/ 1>/dev/null 2>&1
+  find /var/logs -name "*.gz" -delete 1>/dev/null 2>&1
 }
 prunedocker() {
   echo "Prune docker images and volumes..."
-  docker system prune --volumes -f
+  docker system prune -af 1>/dev/null 2>&1
 }
