@@ -119,8 +119,6 @@ clonestart() {
     elif [[ "$transport" == "be" ]]; then
         outputversion="Encrypted Mounts"
 		output="Tcrypt"
-    elif [[ "$transport" == "le" ]]; then
-        outputversion="Local Hard Drives"
     fi
     if [[ "$transport" == "le" ]]; then
         tee <<-EOF
@@ -134,8 +132,7 @@ EOF
         tee <<-EOF
 
 [1] Deploy               ( Local HD / Mounts )
-[2] MultiHD              ( Add Mounts or Hard Drives )
-[3] Transport            ( Change Transportion Mode )
+[2] Transport            ( Change Transportion Mode )
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 [Z] Exit
@@ -154,8 +151,8 @@ EOF
 
 EOF
         clonestartoutput
-		dockerstatusuploader
-		dockerstatusmount
+        dockerstatusuploader
+        dockerstatusmount
         tee <<-EOF
 ____________________________________________________
 Docker Status :
@@ -188,24 +185,13 @@ if [[ "$mount" == "mount" ]]; then
  mstatus="✅ DEPLOYED"
   else mstatus="⚠️ NOT DEPLOYED"; fi
 }
-localstartoutput() {
-    case $typed in
-    1) executelocal ;;
-    2) bash /opt/plexguide/menu/multihd/multihd.sh ;;
-    3) transportselect ;;
-    z) exit ;;
-    Z) exit ;;
-    *) clonestart ;;
-    esac
-    clonestart
-}
 clonestartactions() {
     if [[ "$transport" == "mu" ]]; then
         case $typed in
-        1)  keyinputpublic ;;
-        2)  publicsecretchecker && echo "gdrive" >/var/plexguide/rclone/deploy.version && oauth ;;
-        z)  exit ;;
-        Z)  exit ;;
+        1) keyinputpublic ;;
+        2) publicsecretchecker && echo "gdrive" >/var/plexguide/rclone/deploy.version && oauth ;;
+        z) exit ;;
+        Z) exit ;;
         a) publicsecretchecker && deploypgmove ;;
         A) publicsecretchecker && deploypgmove ;;
         o) optionsmenumove ;;
@@ -282,13 +268,11 @@ optionsmenu() {
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 [1] Transport Select             | INFO: Change Transport Type
-[2] Multi-HD Option              | INFO: Add Multi-Points and Options
-[3] Destroy All Service Keys     | WARN: Wipes All Keys for the Project
-[4] Create New Project           | WARN: Resets Everything
-[5] Demo Mode                    | Hide the E-Mail Address on the Front
-[6] Clone Clean                  | Set NZB or Torrent
+[2] Destroy All Service Keys     | WARN: Wipes All Keys for the Project
+[3] Create New Project           | WARN: Resets Everything
+[4] Demo Mode                    | Hide the E-Mail Address on the Front
 
-[7] Create a TeamDrive
+[5] Create a TeamDrive
 
 NOTE: When creating a NEW PROJECT, the USER must create the
 CLIENT ID and SECRET for that project! We will assist in creating the
@@ -303,12 +287,10 @@ EOF
 
     case $typed in
     1)  transportselect && clonestart ;;
-    2)  bash /opt/plexguide/menu/multihd/multihd.sh ;;
-    3)  deletekeys ;;
-    4)  projectnameset ;;
-    5)  demomode ;;
-    6)  changeCloneCleanInterval ;;
-    7)  ctdrive ;;
+    2)  deletekeys ;;
+    3)  projectnameset ;;
+    4)  demomode ;;
+    5)  ctdrive ;;
     Z)  clonestart ;;
     z)  clonestart ;;
     *)  optionsmenu ;;
@@ -325,8 +307,6 @@ optionsmenumove() {
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 [1] Transport Select           | INFO: Change Transport Type
-[2] Multi-HD Option            | INFO: Add Multi-Points and Options
-[3] Clone Clean                | Set NZB or Torrent
 
 NOTE: When creating a NEW PROJECT, the USER must create the
 CLIENT ID and SECRET for that project! We will assist in creating the
@@ -341,8 +321,6 @@ EOF
 
     case $typed in
     1) transportselect && clonestart ;;
-    2) bash /opt/plexguide/menu/multihd/multihd.sh ;;
-    3) changeCloneCleanInterval ;;
     Z) clonestart ;;
     z) clonestart ;;
     *) optionsmenu ;;
