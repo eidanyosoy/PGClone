@@ -26,6 +26,7 @@
       - { name: pgunion.service }
       - { name: localspace.service }
       - { name: mountcheck.servive }
+      - { name: cloneclean.servive }
 
   tasks:
     - name: Get existing services
