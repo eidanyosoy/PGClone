@@ -9,9 +9,6 @@
 - hosts: localhost
   gather_facts: false
   tasks:
-    - name: include rClone aliases
-      include_tasks: '/opt/pgclone/bin/bin.yml'
-
     - name: include rClone cron jobs
       include_tasks: '/opt/pgclone/ymls/cron.yml'
 
