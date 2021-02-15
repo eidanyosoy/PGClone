@@ -24,6 +24,7 @@
       - { name: plexdrive.service }
       - { name: st2monitor.service }
       - { name: pgunion.service }
+      - { name: cloneclean.service }
 
   tasks:
     - name: Stop All Docker Containers
