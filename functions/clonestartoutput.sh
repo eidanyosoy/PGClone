@@ -22,24 +22,7 @@ clonestartoutput() {
 echo "ACTIVELY DEPLOYED: 	  $dversionoutput "
 echo ""
     if [[ "$demo" == "ON " ]]; then mainid="********"; else mainid="$pgcloneemail"; fi
-    if [[ "$transport" == "mu" ]]; then
-        tee <<-EOF
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-[1] Client ID & Secret       [ ${pgcloneid} ]
-[2] GDrive                   [ $gstatus ]
-
-EOF
-    elif [[ "$transport" == "me" ]]; then
-        tee <<-EOF
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-[1] Client ID & Secret       [ ${pgcloneid} ]
-[2] Passwords                [ $pstatus ]
-[3] GDrive                   [ $gstatus ] - [ $gcstatus ]
-
-EOF
-    elif [[ "$transport" == "bu" ]]; then
+    if [[ "$transport" == "bu" ]]; then
         tee <<-EOF
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -95,54 +78,17 @@ EOF
 }
 clonestart() {
     pgclonevars
-    # pull throttle speeds based on role
-    if [[ "$transport" == "mu" || "$transport" == "me" ]]; then
-        throttle=$(cat /var/plexguide/move.bw)
-        output1="[C] Transport Select"
-    else
-        throttle=$(cat /var/plexguide/blitz.bw)
-        output1="[S] RClone Settings"
-    fi
-    if [[ "$transport" != "mu" && "$transport" != "me" && "$transport" != "bu" && "$transport" != "be" && "$transport" != "le" ]]; then
+    if [[ "$transport" != "bu" && "$transport" != "be" ]]; then
         rm -rf /var/plexguide/pgclone.transport 1>/dev/null 2>&1
         mustset
     fi
-    if [[ "$transport" == "mu" ]]; then
+    if [[ "$transport" == "bu" ]]; then
         outputversion="Unencrypted Mounts"
-		output="Gdrive"
-    elif [[ "$transport" == "me" ]]; then
-        outputversion="Encrypted Mounts"
-		output="Gcrypt"
-    elif [[ "$transport" == "bu" ]]; then
-        outputversion="Unencrypted Mounts"
-		output="TDrive"
+        output="TDrive"
     elif [[ "$transport" == "be" ]]; then
         outputversion="Encrypted Mounts"
-		output="Tcrypt"
+        output="TCrypt"
     fi
-    if [[ "$transport" == "le" ]]; then
-        tee <<-EOF
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-💪 Welcome to the Local-Edition
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-EOF
-        clonestartoutput
-        tee <<-EOF
-
-[1] Deploy               ( Local HD / Mounts )
-[2] Transport            ( Change Transportion Mode )
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-[Z] Exit
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-
-EOF
-        read -rp '↘️  Input Selection | Press [ENTER]: ' typed </dev/tty
-        localstartoutput
-    else
         tee <<-EOF
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -171,7 +117,6 @@ Mount                  [ $mstatus ] - [ $output ]
 EOF
         read -rp '↘️  Input Selection | Press [ENTER]: ' typed </dev/tty
         clonestartactions
-    fi
 }
 dockerstatusuploader() {
 upper=$(docker ps --format '{{.Names}}' | grep "uploader")
@@ -186,34 +131,7 @@ if [[ "$mount" == "mount" ]]; then
   else mstatus="⚠️ NOT DEPLOYED"; fi
 }
 clonestartactions() {
-    if [[ "$transport" == "mu" ]]; then
-        case $typed in
-        1) keyinputpublic ;;
-        2) publicsecretchecker && echo "gdrive" >/var/plexguide/rclone/deploy.version && oauth ;;
-        z) exit ;;
-        Z) exit ;;
-        a) publicsecretchecker && deploypgmove ;;
-        A) publicsecretchecker && deploypgmove ;;
-        o) optionsmenumove ;;
-        O) optionsmenumove ;;
-        *) clonestart ;;
-        esac
-
-    elif [[ "$transport" == "me" ]]; then
-        case $typed in
-        1) keyinputpublic ;;
-        2) publicsecretchecker && blitzpasswordmain ;;
-        3) publicsecretchecker && passwordcheck && echo "gdrive" >/var/plexguide/rclone/deploy.version && oauth ;;
-        z) exit ;;
-        Z) exit ;;
-        a) publicsecretchecker && passwordcheck && deploypgmove ;;
-        A) publicsecretchecker && passwordcheck && deploypgmove ;;
-        o) optionsmenumove ;;
-        O) optionsmenumove ;;
-        *) clonestart ;;
-        esac
-
-    elif [[ "$transport" == "bu" ]]; then
+    if [[ "$transport" == "bu" ]]; then
         case $typed in
         1) glogin ;;
         2) exisitingproject ;;
