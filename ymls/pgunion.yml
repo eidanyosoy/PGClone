@@ -9,9 +9,6 @@
 - hosts: localhost
   gather_facts: false
   tasks:
-    - name: include rClone cron jobs
-      include_tasks: '/opt/pgclone/ymls/cron.yml'
-
     - name: Register HD Path
       shell: 'cat /var/plexguide/server.hd.path'
       register: hdpath
