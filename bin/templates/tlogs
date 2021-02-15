@@ -1,4 +1,0 @@
-##remove the logs
-
-truncate -s 0 /var/plexguide/logs/uploader/upload.log
-truncate -s 0 /var/plexguide/logs/drive/rclone-*.log
