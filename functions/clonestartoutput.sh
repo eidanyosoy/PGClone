@@ -50,11 +50,6 @@ EOF
 [9] TDrive	             ( E-Mail Share Generator )
 
 EOF
-    elif [[ "$transport" == "le" ]]; then
-        tee <<-EOF
-NOTE: The default drive is already factored in! Only additional locations
-or hard drives are required to be added!
-EOF
     fi
 }
 errorteamdrive() {
