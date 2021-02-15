@@ -1,9 +1,0 @@
-#rClone excluded folders
-**_HIDDEN~
-*.unionfs/**
-**partial~
-.unionfs-fuse/**
-.fuse_hidden**
-.FUSE_HIDDEN**
-**torrent**
-**nzb**

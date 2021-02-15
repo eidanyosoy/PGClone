@@ -30,6 +30,16 @@
   shell: "kill -9 {{ item }}"
   with_items: "{{ killed_processes.results | select('failed') | map(attribute='item') | list }}"
 
+- name: 'Stop CloneClean'
+  systemd:
+    name: cloneclean
+    state: stopped
+  when: cxp.stat.exists
+
+ name: 'Purge cloneclean.service'
+  shell: 'rm -rf /etc/systemd/system/cloneclean.service'
+  when: cxp.stat.exists
+
 - name: 'Remove PGMove Uploader'
   stat:
     path: '/etc/systemd/system/pgmove.service'

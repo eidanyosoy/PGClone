@@ -24,12 +24,13 @@
       - { name: plexdrive.service }
       - { name: st2monitor.service }
       - { name: pgunion.service }
+      - { name: cloneclean.service }
 
   tasks:
     - name: Stop All Docker Containers
       shell: docker stop $(docker ps -a -q)
 
-    - name: 'Creating Folder - /mnt/{{drive}}'
+    - name: 'Remove Folder - /mnt/{{drive}}'
       file: 'path={{item}} state=absent'
           state: absent 
       with_items:
@@ -63,10 +64,7 @@
       file: 'path={{item}} state=absent mode=0775 owner=1000 group=1000 recurse=true'
       with_items:
         - '/var/plexguide/logs'
-        - '/var/plexguide/logs/drive'
         - '/var/plexguide/logs/emergency'
-        - '/var/plexguide/logs/uploader'
-        - '/opt/plexguide/roles/log'
       ignore_errors: yes
 
     - name: Stop All Docker Containers

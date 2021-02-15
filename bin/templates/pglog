@@ -1,1 +1,0 @@
-docker logs --since $(date '+%Y-%m-%d') --tail 50 $1
