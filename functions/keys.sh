@@ -262,6 +262,7 @@ EOF
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 TIPS:
+
 [ 1. ] Did you copy your username and password correctly?
 [ 2. ] When you created the credentials, did you select "Other"?
 [ 3. ] Did you enable your API?
@@ -285,16 +286,16 @@ EOF
 }
 
 deletekeys2() {
-  choicedel=$(cat /var/plexguide/gdsa.cut)
-  if [ "$choicedel" != "" ]; then
+  del=$(gcloud iam service-accounts list | grep gservice | cut -d' ' -f3 | sort)
+  if [ "$del" != "" ]; then
     echo ""
     echo "Deleting All Previous Service Accounts & Keys!"
     echo ""
-
-    while read p; do
-      gcloud iam service-accounts delete $p --quiet
-    done </var/plexguide/gdsa.cut
-
+    del=$(gcloud iam service-accounts list | grep gservice | cut -d' ' -f3 | sort)
+    for i in ${del[@]}; do
+        gcloud iam service-accounts delete $i --quiet
+        echo " Removing  $i now "
+    done
     rm -rf /opt/appdata/plexguide/keys/processed/* 1>/dev/null 2>&1
     tee <<-EOF
 
@@ -319,17 +320,15 @@ EOF
 }
 
 deletekeys() {
+del=$(gcloud iam service-accounts list | grep gservice | cut -d' ' -f3 | sort | wc -l)
+if [[ "$del" != "" ]]; then
   tee <<-EOF
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🚀 ID: Key Gen Information
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-EOF
-  gcloud iam service-accounts list --filter="GDSA" >/var/plexguide/gdsa.list
-  cat /var/plexguide/gdsa.list | awk '{print $2}' | tail -n +2 >/var/plexguide/gdsa.cut
-  cat /var/plexguide/gdsa.cut
-  tee <<-EOF
+$del
 
 Items listed are all service accounts that have been created! Proceeding
 onward will destroy all service accounts and current keys!
@@ -338,13 +337,17 @@ EOF
   read -p '🌍 Proceed? y or n | Press [ENTER]: ' typed </dev/tty
 
   if [[ "$typed" == "Y" || "$typed" == "y" ]]; then
-    deletekeys2
+      deletekeys2
   elif [[ "$typed" == "N" || "$typed" == "n" ]]; then
-    question1
+      question1
   else
     badinput
     deletekeys
   fi
+
+else
+  question1
+fi
 }
 gdsabuild() {
   ## what sets if encrypted is on or not
@@ -398,63 +401,50 @@ gdsabuild() {
 
 }
 deploykeys3() {
- kread=$(gcloud --account=${pgcloneemail} iam service-accounts list | awk '{print $1}' | tail -n +2 | cut -c7- | cut -f1 -d "?" | sort | uniq | head -n 1 >/var/plexguide/.gcloudposs)
- keyposs=$(cat /var/plexguide/.gcloudposs )
-
-FIRSTV=$keyposs
-SECONDV=1
-keysposscount=$(expr $FIRSTV - $SECONDV)
-#echo $keysposscount
-
   tee <<-EOF
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🚀 SYSTEM MESSAGE: Key Number Selection! (From 2 thru 20 )
+🚀 SYSTEM MESSAGE: Key Number Selection! (From 4 thru 20 )
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 QUESTION - Create how many keys for Blitz? 
 
+MINIMUM is 4 🔑
+
 MATH:
-2  Keys = 1.5 TB Daily | 6  Keys = 4.5 TB Daily
-10 Keys = 7.5 TB Daily | 20 Keys = 15  TB Daily
 
-Possible $keysposscount before you hit the 100 SAC's
-
-NOTE 1: Creating more keys DOES NOT SPEED up your transfers
-NOTE 2: Realistic key generation for most are 6 - 8 keys
-NOTE 3: 20 Keys are only for GCE Feeder !!
-NOTE 4: maximum of SAC is 100 , remove unused keys !!
+4  Keys = 3.0 TB Daily | 6  Keys =  4.5 TB Daily
+8  Keys = 6.0 TB Daily | 10 Keys =  7.5 TB Daily
+12 Keys = 9.0 TB Daily | 14 Keys = 10.5 TB Daily
+16 Keys = 12  TB Daily | 18 Keys = 13.5 TB Daily
+20 Keys = 15  TB Daily
 
 💬 # of Keys Generated Sets Your Daily Upload Limit!
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 EOF
-  read -p '↘️  Type a Number [ 1 thru 20 ] | Press [ENTER]: ' typed </dev/tty
+  read -p '↘️  Type a Number [ 4 thru 20 ] | Press [ENTER]: ' typed </dev/tty
 
   num=$typed
   echo ""
- if [[ "$typed" -le "0" || "$typed" -ge "21" ]]; then
-    echo "Creating $typed Keys" && keys=$typed
+  if [[ "$typed" -le "3" || "$typed" -ge "21" ]]; then
+     echo "Creating $typed Keys" && keys=$typed
   fi
   sleep 2
   echo ""
-
-   if [[ "$typed" -le "0" || "$typed" -ge "51" ]]; then deploykeys3; fi
-
+  if [[ "$typed" -le "0" || "$typed" -ge "51" ]]; then deploykeys3; fi
   num=$keys
   count=0
   project=$(cat /var/plexguide/pgclone.project)
-
   ##wipe previous keys stuck there
   mkdir -p /opt/appdata/plexguide/keys/processed/
   rm -rf /opt/appdata/plexguide/keys/processed/* 1>/dev/null 2>&1
-
   ## purpose of the rewrite is to save gdrive and tdrive info and toss old GDSAs
   cat /opt/appdata/plexguide/rclone.conf | grep -w "\[tdrive\]" -A 5 >/opt/appdata/plexguide/tdrive.info
   cat /opt/appdata/plexguide/rclone.conf | grep -w "\[gdrive\]" -A 4 >/opt/appdata/plexguide/gdrive.info
   cat /opt/appdata/plexguide/rclone.conf | grep -w "\[tcrypt\]" -A 6 >/opt/appdata/plexguide/tcrypt.info
   cat /opt/appdata/plexguide/rclone.conf | grep -w "\[gcrypt\]" -A 6 >/opt/appdata/plexguide/gcrypt.info
 
-  echo "#### rclone rewrite generated by PTS" >/opt/appdata/plexguide/rclone.conf
+  echo "#### rclone rewrite" >/opt/appdata/plexguide/rclone.conf
   echo "" >>/opt/appdata/plexguide/rclone.conf
   echo "" >>/opt/appdata/plexguide/rclone.conf
   cat /opt/appdata/plexguide/gdrive.info >>/opt/appdata/plexguide/rclone.conf
@@ -470,17 +460,15 @@ EOF
     rand=$(echo $((1 + RANDOM * RANDOM)))
 
     if [ "$count" -ge 1 -a "$count" -le 9 ]; then
-      gcloud iam service-accounts create gdsa$rand --display-name “gdsa0$count”
-      gcloud iam service-accounts keys create /opt/appdata/plexguide/keys/processed/gdsa0$count --iam-account gdsa$rand@$project.iam.gserviceaccount.com --key-file-type="json"
-      echo "gdsa0$count" >/var/plexguide/json.tempbuild
-      gdsabuild
-      echo ""
+       gcloud iam service-accounts create gdsa$rand --display-name “gdsa0$count”
+       gcloud iam service-accounts keys create /opt/appdata/plexguide/keys/processed/gdsa0$count --iam-account gdsa$rand@$project.iam.gserviceaccount.com --key-file-type="json"
+       echo "gdsa0$count" >/var/plexguide/json.tempbuild
+       gdsabuild && echo ""
     else
-      gcloud iam service-accounts create gdsa$rand --display-name “gdsa$count”
-      gcloud iam service-accounts keys create /opt/appdata/plexguide/keys/processed/gdsa$count --iam-account gdsa$rand@$project.iam.gserviceaccount.com --key-file-type="json"
-      echo "gdsa$count" >/var/plexguide/json.tempbuild
-      gdsabuild
-      echo ""
+       gcloud iam service-accounts create gdsa$rand --display-name “gdsa$count”
+       gcloud iam service-accounts keys create /opt/appdata/plexguide/keys/processed/gdsa$count --iam-account gdsa$rand@$project.iam.gserviceaccount.com --key-file-type="json"
+       echo "gdsa$count" >/var/plexguide/json.tempbuild
+       gdsabuild && echo ""
     fi
   done
 
@@ -503,14 +491,16 @@ deploykeys2() {
 }
 
 deploykeys() {
-  gcloud iam service-accounts list --filter="gdsa" >/var/plexguide/gdsa.list
-  cat /var/plexguide/gdsa.list | awk '{print $2}' | tail -n +2 >/var/plexguide/gdsa.cut
+  gcloudkey=$(gcloud iam service-accounts list | grep gservice | cut -d' ' -f3 | sort)
+  echo "$gcloudkey" >/var/plexguide/gdsa.list
+  #gcloud iam service-accounts list --filter="gdsa" >/var/plexguide/gdsa.list
+  #cat /var/plexguide/gdsa.list | awk '{print $2}' | tail -n +2 >/var/plexguide/gdsa.cut
   deploykeys2
 }
 
 projectid() {
-  # gcloud projects list >/var/plexguide/projects.list
-  gcloud projects list | cut -d' ' -f1 | tail -n +2 >/var/plexguide/project.cut
+  #gcloud projects list >/var/plexguide/projects.list
+  gcloud projects list | cut -d' ' -f1 | tail -n +2 | sort >/var/plexguide/project.cut
   projectlist=$(gcloud projects list | cut -d' ' -f1 | tail -n +2)
   tee <<-EOF
 
@@ -525,9 +515,9 @@ EOF
   read -p '↘️  Type EXACT Project Name to Utilize | Press [ENTER]: ' typed2 </dev/tty
   list=$(cat /var/plexguide/project.cut | grep $typed2)
   if [ "$list" == "" ]; then
-    badinput && projectid
+     badinput && projectid
   fi
-  gcloud config set project $typed2
+  set -x && gcloud config set project $typed2 && set +x
   tee <<-EOF
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -535,7 +525,12 @@ EOF
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 EOF
-  gcloud services enable drive.googleapis.com --project $typed2
+  #gcloud services enable drive.googleapis.com --project $typed2
+  gcloud services enable drive.googleapis.com sheets.googleapis.com \
+         admin.googleapis.com cloudresourcemanager.googleapis.com \
+         servicemanagement.googleapis.com --project $typed2
+
+  
   echo $typed2 >/var/plexguide/project.final
   echo
   read -p '🌍 Process Complete | Press [ENTER] ' typed2 </dev/tty
@@ -650,7 +645,7 @@ pgbdeploy() {
   tee <<-EOF
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🚀 System Message: Blitz Deployed!
+🚀 System Message: Deployed!
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 EOF
@@ -663,9 +658,9 @@ keymenu() {
   project=$(cat /var/plexguide/pgclone.project)
 
   if [ "$account" == "NOT-SET" ]; then
-    display5="[NOT-SET]"
+     display5="[NOT-SET]"
   else
-    display5="$account"
+     display5="$account"
   fi
 
   tee <<-EOF
@@ -674,15 +669,16 @@ keymenu() {
 🚀 Blitz Key Generation 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-[1] Google Account Login: [ $display5 ]
-[2] Project Options     : [ $project ]
+[1] Google Account Login  : [ $display5 ]
+[2] Project Options       : [ $project ]
 [3] Create Service Keys
 [4] EMail Generator
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-[A] Backup  Keys
+
 [C] Destory All Prior Service Accounts
 [Z] Exit
+
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 EOF
@@ -690,19 +686,19 @@ EOF
   read -p '↘️  Type Choice | Press [ENTER]: ' typed </dev/tty
 
   if [ "$typed" == "1" ]; then
-    gcloud auth login
-    gcloud info | grep Account: | cut -c 10- >/var/plexguide/project.account
-    account=$(cat /var/plexguide/project.account)
-    keymenu
+     gcloud auth login
+     gcloud info | grep Account: | cut -c 10- >/var/plexguide/project.account
+     account=$(cat /var/plexguide/project.account)
+     keymenu
   elif [ "$typed" == "2" ]; then
-    projectmenu
-    keymenu
+     projectmenu
+     keymenu
   elif [ "$typed" == "3" ]; then
-    rchecker
-    if [ $rchecker=fail ]; then
-      deploykeys
-      keymenu
-    fi
+     rchecker
+     if [ $rchecker=fail ]; then
+        deploykeys
+        keymenu
+     fi
   elif [ "$typed" == "4" ]; then
     bash /opt/pgclone/emails.sh && echo
     read -p '↘️  Confirm Info | Press [ENTER]: ' typed </dev/tty
@@ -711,9 +707,6 @@ EOF
     question1
   elif [[ "$typed" == "C" || "$typed" == "c" ]]; then
     deletekeys
-    keymenu
-  elif [[ "$typed" == "A" || "$typed" == "a" ]]; then
-    keybackup
     keymenu
   else
     badinput
