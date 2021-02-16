@@ -95,7 +95,7 @@ pgclonevars() {
     variable /var/plexguide/.tmp.multihd
     multihds=$(cat /var/plexguide/.tmp.multihd)
 
-   If [[ "$dversion" == "bu" ]]; then
+    if [[ "$dversion" == "bu" ]]; then
         dversionoutput="TDRIVE"
     elif [[ "$dversion" == "be" ]]; then
         dversionoutput="TDRIVE: Encrypted"
