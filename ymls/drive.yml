@@ -27,8 +27,8 @@
       - { name: cloneclean.service }
 
   tasks:
-    - name: Stop All Docker Containers
-      shell: docker stop $(docker ps -a -q)
+    - name: Stop some Docker Containers
+      shell: docker stop $(docker ps -aq --format '{{.Names}}' | sed '/^$/d' | grep -E 'ple|arr|emby|jelly')
 
     - name: 'Remove Folder - /mnt/{{drive}}'
       file: 'path={{item}} state=absent'
@@ -68,5 +68,6 @@
       ignore_errors: yes
 
     - name: Stop All Docker Containers
-      shell: docker start $(docker ps -a -q)
+      shell: docker start $(docker ps -aq --format '{{.Names}}' | sed '/^$/d' | grep -E 'ple|arr|emby|jelly')
+
 
