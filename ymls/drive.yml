@@ -67,7 +67,5 @@
         - '/var/plexguide/logs/emergency'
       ignore_errors: yes
 
-    - name: Stop All Docker Containers
+    - name: Start all stopped Docker Containers
       shell: docker start $(docker ps -aq --format '{{.Names}}' | sed '/^$/d' | grep -E 'ple|arr|emby|jelly')
-
-
