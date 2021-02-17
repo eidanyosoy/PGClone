@@ -152,7 +152,6 @@ EOF
     cleanlogs
     stopmunts
     testdrive
-    multihdreadonly
     updatesystem
     update_pip
     stopmunts
