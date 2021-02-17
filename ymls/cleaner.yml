@@ -36,7 +36,7 @@
     state: stopped
   when: cxp.stat.exists
 
- name: 'Purge cloneclean.service'
+- name: 'Purge cloneclean.service'
   shell: 'rm -rf /etc/systemd/system/cloneclean.service'
   when: cxp.stat.exists
 
