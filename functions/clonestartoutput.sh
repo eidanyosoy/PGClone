@@ -16,7 +16,22 @@ sudocheck() {
 EOF
     exit 0
   fi
+mntcheck
 }
+mntcheck() {
+mnt=$(cat /var/plexguide/server.hd.path)
+if [[ "$mnt" != "/mnt" ]];then 
+    tee <<-EOF
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⛔️  SORRY !!! MOUNT DOCKER and UPLOAD DOCKER DONT WORKS WITH PROCESSING DISCS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+EOF
+exit 0
+fi
+}
+
 clonestartoutput() {
     pgclonevars
 echo "ACTIVELY DEPLOYED: 	  $dversionoutput "
