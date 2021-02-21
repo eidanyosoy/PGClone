@@ -155,6 +155,7 @@ EOF
     updatesystem
     update_pip
     stopmunts
+    unmoubtdrive
     dockervolumen
     deploydockeruploader	
     deploydockermount
@@ -177,6 +178,17 @@ for i in ${mounttest[@]}; do
     echo "$i = Passed"
 done
 }
+unmoubtdrive() {
+IFS=$'\n'
+filter="$1"
+config=/opt/appdata/plexguide/rclone.conf
+mapfile -t mounttest < <(eval rclone listremotes --config=${config} | grep "$filter" | sed '/GDSA/d' | sed '/pgunion/d')
+for i in ${mounttest[@]}; do
+    fusermount -uzq /mnt/$i
+    echo "unmount of $i = Passed"
+done
+}
+
 ################################################################################
 deployblitzstartcheck() {
   pgclonevars
