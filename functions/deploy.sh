@@ -74,9 +74,10 @@ if [[ "$mount" == "mount" ]]; then
    docker stop mount 1>/dev/null 2>&1
    fusermount -uzq /mnt/unionfs 1>/dev/null 2>&1
 else
+   service stop pgunion >/dev/null 2>&1
    fusermount -uzq /mnt/unionfs 1>/dev/null 2>&1
+   rm -f /etc/systemd/system/pgunion.service 1>/dev/null 2>&1
 fi
-
 }
 removeoldui() {
 UI=$(docker ps --format '{{.Names}}' | grep "pgui")
@@ -88,6 +89,10 @@ fi
 }
 update_pip() {
 pip3 list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1 | xargs -n1 pip3 install -U 1>/dev/null 2>&1
+}
+stopdocker() {
+  container=$(docker ps -aq --format '{{.Names}}' | sed '/^$/d' | grep -E 'ple|arr|emby|jelly')
+  docker stop $container 1>/dev/null 2>&1
 }
 vnstat() {
   apt-get install ethtool vnstat vnstati -yqq 2>&1 >>/dev/null
@@ -146,6 +151,7 @@ tee <<-EOF
       🚀 Conducting RClone Mount Checks
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 EOF
+    stopdocker
     vnstat
     norcloneconf
     removeoldui
@@ -155,7 +161,7 @@ EOF
     updatesystem
     update_pip
     stopmunts
-    unmoubtdrive
+    unmountdrive
     dockervolumen
     deploydockeruploader	
     deploydockermount
@@ -178,14 +184,16 @@ for i in ${mounttest[@]}; do
     echo "$i = Passed"
 done
 }
-unmoubtdrive() {
+unmountdrive() {
 IFS=$'\n'
 filter="$1"
 config=/opt/appdata/plexguide/rclone.conf
 mapfile -t mounttest < <(eval rclone listremotes --config=${config} | grep "$filter" | sed '/GDSA/d' | sed '/pgunion/d')
 for i in ${mounttest[@]}; do
-    fusermount -uzq /mnt/$i
+    service stop $i 1>/dev/null 2>&1
+    fusermount -uzq /mnt/$i 1>/dev/null 2>&1
     echo "unmount of $i = Passed"
+    rm -f /etc/systemd/system/$i.service 1>/dev/null 2>&1
 done
 }
 
