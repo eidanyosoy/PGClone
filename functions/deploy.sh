@@ -105,7 +105,17 @@ vnstat() {
      sed -i 's/Locale "-"/Locale "LC_ALL=en_US.UTF-8"/g' /etc/vnstat.conf
      /etc/init.d/vnstat restart 1>/dev/null 2>&1
 }
-
+mover() {
+hdpath="$(cat /var/plexguide/server.hd.path)"
+if [[ -d "$hdpath" ]]; then
+   if [[ $(find "$hdpath/move" -type f | wc -l) -gt 0 ]]; then
+      pip3 install --user rsyncy -q
+      rsync "$hdpath/move/" "$hdpath/downloads/" -a --info=progress2 -hv --remove-source-files | rsyncy
+      chown -R 1000:1000 "$hdpath/downloads"
+      pip3 install --user rsyncy -yq
+   fi
+fi
+}
 deploydockermount() {
 tee <<-EOF
      🚀      Deploy of Docker Mounts started
@@ -157,6 +167,7 @@ EOF
     removeoldui
     cleanlogs
     stopmunts
+    mover
     testdrive
     updatesystem
     update_pip
