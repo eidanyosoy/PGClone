@@ -112,10 +112,8 @@ if [[ -d "$hdpath/move" ]]; then
       apt-get install rsync -yqq
    fi
    if [[ $(find "$hdpath/move" -type f | wc -l) -gt 0 ]]; then
-      pip3 install --user rsyncy -q
-      rsync "$hdpath/move/" "$hdpath/downloads/" -a --info=progress2 -hv --remove-source-files | rsyncy
+      rsync "$hdpath/move/" "$hdpath/downloads/" -a --info=progress2 -hv --remove-source-files
       chown -R 1000:1000 "$hdpath/downloads"
-      pip3 install --user rsyncy -yq
    fi
    if [[ -x "$(command -v rsync)" ]]; then
       apt-get --purge remove rsync -yqq
