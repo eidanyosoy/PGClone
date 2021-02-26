@@ -55,7 +55,7 @@ done
 }
 
 function uppercut() {
-ansiv=$(ansible --version | head -n1 | awk '{print $2}'
+ansiv=$(ansible --version | head -n1 | awk '{print $2}')
 if [[ "$ansiv" -lt "2.10" ]]; then
    pip uninstall ansible 1>/dev/null 2>&1
    pip install ansible-base 1>/dev/null 2>&1
