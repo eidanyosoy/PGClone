@@ -12,7 +12,7 @@ EOF
   fi
 }
 
-fuunction mntcheck() {
+fuuction mntcheck() {
 mnt=$(cat /var/plexguide/server.hd.path)
 if [[ "$mnt" != "/mnt" ]];then 
     tee <<-EOF
