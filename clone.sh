@@ -73,7 +73,7 @@ if [[ "$gcloudversion" -lt "307" ]]; then
       rm -rf /root/google-cloud-sdk
    fi
    bash /tmp/install.sh --disable-prompts
-   rn -d /tmp/install.sh
+   rm -f /tmp/install.sh
 fi
 }
 
