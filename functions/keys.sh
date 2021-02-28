@@ -404,7 +404,7 @@ deploykeys3() {
   tee <<-EOF
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🚀 SYSTEM MESSAGE: Key Number Selection! (From 4 thru 20 )
+🚀 SYSTEM MESSAGE: Key Number Selection! (From 4 thru 60 )
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 QUESTION - Create how many keys for Blitz? 
 
@@ -415,23 +415,23 @@ MATH:
 4  Keys = 3.0 TB Daily | 6  Keys =  4.5 TB Daily
 8  Keys = 6.0 TB Daily | 10 Keys =  7.5 TB Daily
 12 Keys = 9.0 TB Daily | 14 Keys = 10.5 TB Daily
-16 Keys = 12  TB Daily | 18 Keys = 13.5 TB Daily
-20 Keys = 15  TB Daily
+16 Keys =  12 TB Daily | 18 Keys = 13.5 TB Daily
+20 Keys =  15 TB Daily | 50 Keys = 37.5 TB Daily
 
 💬 # of Keys Generated Sets Your Daily Upload Limit!
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 EOF
-  read -p '↘️  Type a Number [ 4 thru 20 ] | Press [ENTER]: ' typed </dev/tty
+  read -p '↘️  Type a Number [ 4 thru 60 ] | Press [ENTER]: ' typed </dev/tty
 
   num=$typed
   echo ""
-  if [[ "$typed" -le "3" || "$typed" -ge "21" ]]; then
+  if [[ "$typed" -le "3" || "$typed" -ge "60" ]]; then
      echo "Creating $typed Keys" && keys=$typed
   fi
   sleep 2
   echo ""
-  if [[ "$typed" -le "0" || "$typed" -ge "51" ]]; then deploykeys3; fi
+  if [[ "$typed" -le "0" || "$typed" -ge "61" ]]; then deploykeys3; fi
   num=$keys
   count=0
   project=$(cat /var/plexguide/pgclone.project)

@@ -105,7 +105,21 @@ vnstat() {
      sed -i 's/Locale "-"/Locale "LC_ALL=en_US.UTF-8"/g' /etc/vnstat.conf
      /etc/init.d/vnstat restart 1>/dev/null 2>&1
 }
-
+mover() {
+hdpath="$(cat /var/plexguide/server.hd.path)"
+if [[ -d "$hdpath/move" ]]; then
+   if [[ ! -x "$(command -v rsync)" ]]; then
+      apt-get install rsync -yqq
+   fi
+   if [[ $(find "$hdpath/move" -type f | wc -l) -gt 0 ]]; then
+      rsync "$hdpath/move/" "$hdpath/downloads/" -a --info=progress2 -hv --remove-source-files
+      chown -R 1000:1000 "$hdpath/downloads"
+   fi
+   if [[ -x "$(command -v rsync)" ]]; then
+      apt-get --purge remove rsync -yqq
+   fi
+fi
+}
 deploydockermount() {
 tee <<-EOF
      🚀      Deploy of Docker Mounts started
@@ -157,6 +171,7 @@ EOF
     removeoldui
     cleanlogs
     stopmunts
+    mover
     testdrive
     updatesystem
     update_pip
