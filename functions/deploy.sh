@@ -120,6 +120,14 @@ if [[ -d "$hdpath/move" ]]; then
    fi
 fi
 }
+vault() {
+  rm -rf /opt/pgvault
+  git clone --quiet https://github.com/doob187/PGVault.git /opt/pgvault
+  rm -rf /opt/plexguide/menu/pgvault/pgvault.sh
+  mv /opt/pgvault/newpgvault.sh /opt/plexguide/menu/pgcloner/pgvault.sh
+  chown -cR 1000:1000 /opt/pgvault/ 1>/dev/null 2>&1
+  chmod -cR 755 /opt/pgvault 1>/dev/null 2>&1
+}
 deploydockermount() {
 tee <<-EOF
      🚀      Deploy of Docker Mounts started
@@ -169,6 +177,7 @@ EOF
     vnstat
     norcloneconf
     removeoldui
+    vault
     cleanlogs
     stopmunts
     mover
