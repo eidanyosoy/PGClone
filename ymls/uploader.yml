@@ -17,6 +17,11 @@
         extport: '7777'
         image: 'ghcr.io/doob187/uploader:latest'
 
+    - name: 'Remove uploader'
+      docker_container:
+        name: 'uploader'
+        state: 'absent'
+
     # CORE (MANDATORY) ############################################################
     - name: 'Including main job'
       include_tasks: '/opt/coreapps/apps/_core.yml'
