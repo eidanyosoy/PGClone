@@ -17,7 +17,7 @@
         extport: '7777'
         image: 'ghcr.io/doob187/uploader:latest'
 
-    - name: 'Remove uploader'
+    - name: 'Remove uploader Container'
       docker_container:
         name: 'uploader'
         state: 'absent'
