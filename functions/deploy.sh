@@ -122,7 +122,7 @@ fi
 }
 vault() {
   rm -rf /opt/pgvault
-  git clone --quiet https://github.com/mrfret/PTS-Vault.git /opt/pgvault
+  git clone --quiet https://github.com/mrfret/PGVault.git /opt/pgvault
   rm -rf /opt/plexguide/menu/pgvault/pgvault.sh
   mv /opt/pgvault/newpgvault.sh /opt/plexguide/menu/pgcloner/pgvault.sh
   chown -cR 1000:1000 /opt/pgvault/ 1>/dev/null 2>&1
