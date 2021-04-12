@@ -78,7 +78,7 @@ fi
 }
 
 function rclone() {
-  curl -fsSL https://raw.githubusercontent.com/mrfret/misc/rcupdate.sh | sudo bash
+  curl -fsSL https://raw.githubusercontent.com/mrfret/misc/master/rcupdate.sh | sudo bash
 }
 
 function clone() {
