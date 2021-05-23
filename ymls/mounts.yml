@@ -14,7 +14,7 @@
         pgrole: 'mount'
         intport: '8080'
         extport: '7755'
-        image: 'ghcr.io/mrfret/mountv2'
+        image: 'ghcr.io/dockserver/docker-mount:master'
 
     - name: 'Remove mount Container'
       docker_container:
