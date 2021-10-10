@@ -15,7 +15,7 @@
         pgrole: 'uploader'
         intport: '8080'
         extport: '7777'
-        image: 'ghcr.io/dockserver/docker-uploader:latest'
+        image: 'hawkinzzz/uploader:latest'
 
     - name: 'Remove uploader Container'
       docker_container:
