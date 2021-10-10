@@ -17,7 +17,7 @@ mnt=$(cat /var/plexguide/server.hd.path)
 if [[ "$mnt" != "/mnt" ]];then 
     tee <<-EOF
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⛔️  SORRY !!! MOUNT DOCKER and UPLOAD DOCKER DONT WORKS WITH PROCESSING DISCS
+⛔️  SORRY !!! MOUNT DOCKER and UPLOAD DOCKER DONT WORK WITH PROCESSING DISCS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 EOF
   sleep 30
