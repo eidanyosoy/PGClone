@@ -14,7 +14,7 @@
         pgrole: 'mount'
         intport: '8080'
         extport: '7755'
-        image: 'ghcr.io/dockserver/docker-mount:dockserver'
+        image: 'hawkinzzz/mount:latest'
 
     - name: 'Remove mount Container'
       docker_container:
