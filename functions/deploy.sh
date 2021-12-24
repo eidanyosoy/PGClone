@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-# Title:      basic parts 
+# Title:      basic parts
 # Author:     MrDoob
 # GNU:        General Public License v3.0
 ################################################################################
 deploypgblitz() {
-  deployblitzstartcheck 
+  deployblitzstartcheck
   # At Bottom - Ensure Keys Are Made
   # RCLONE BUILD
   echo "#------------------------------------------" >/opt/appdata/plexguide/rclone.conf
@@ -48,9 +48,9 @@ EOF
 else
 tee <<-EOF
      🚀      Creating Docker Volume starting
-     🚀      this can take a long time  
+     🚀      this can take a long time
 EOF
-curl -fsSL https://raw.githubusercontent.com/MatchbookLab/local-persist/master/scripts/install.sh | sudo bash
+curl -fsSL https://raw.githubusercontent.com/eidanyosoy/local-persist/master/scripts/install.sh | sudo bash
 docker volume create -d local-persist -o mountpoint=/mnt --name=unionfs 1>/dev/null 2>&1
 tee <<-EOF
      🚀      Creating Docker Volume created
@@ -59,8 +59,8 @@ fi
 }
 updatesystem() {
 tee <<-EOF
-     🚀      System will be updated now 
-	     this can take a long time  
+     🚀      System will be updated now
+	     this can take a long time
 EOF
   # update system to new packages
    ansible-playbook /opt/pgclone/ymls/update.yml 1>/dev/null 2>&1
@@ -70,7 +70,7 @@ EOF
 }
 stopmunts() {
 mount=$(docker ps --format '{{.Names}}' | grep "mount")
-if [[ "$mount" == "mount" ]]; then 
+if [[ "$mount" == "mount" ]]; then
    docker stop mount 1>/dev/null 2>&1
    fusermount -uzq /mnt/unionfs 1>/dev/null 2>&1
 else
@@ -81,7 +81,7 @@ fi
 }
 removeoldui() {
 UI=$(docker ps --format '{{.Names}}' | grep "pgui")
-if [[ "$UI" == "pgui" ]]; then 
+if [[ "$UI" == "pgui" ]]; then
    docker stop pgui 1>/dev/null 2>&1
    docker rm pgui 1>/dev/null 2>&1
    rm -rf /opt/appdata/pgui/ 1>/dev/null 2>&1
@@ -122,7 +122,7 @@ fi
 }
 vault() {
   rm -rf /opt/pgvault
-  git clone --quiet https://github.com/mrfret/PGVault.git /opt/pgvault
+  git clone --quiet https://github.com/eidanyosoy/PGVault.git /opt/pgvault
   rm -rf /opt/plexguide/menu/pgvault/pgvault.sh
   mv /opt/pgvault/newpgvault.sh /opt/plexguide/menu/pgcloner/pgvault.sh
   chown -cR 1000:1000 /opt/pgvault/ 1>/dev/null 2>&1
@@ -143,10 +143,10 @@ rcc=/opt/appdata/plexguide/rclone.conf
 if [[ ! -f "$rcc" ]]; then
 tee <<-EOF
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    ⛔ Fail Notice for deploy of Docker 
+    ⛔ Fail Notice for deploy of Docker
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
      Sorry we cant Deploy the Docker.
-     We cant find any rclone.conf file 
+     We cant find any rclone.conf file
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     ⛔ Fail Notice for deploy of Docker
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -187,7 +187,7 @@ EOF
     stopmunts
     unmountdrive
     dockervolumen
-    deploydockeruploader	
+    deploydockeruploader
     deploydockermount
     doneokay
     clonestart
@@ -231,7 +231,7 @@ deployblitzstartcheck() {
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   💬  There are [0] keys generated for Blitz! Create those first!
-  NOTE: 
+  NOTE:
 
   Without any keys, Blitz cannot upload any data without the use
   of service accounts

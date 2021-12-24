@@ -14,7 +14,7 @@ EOF
 
 function mntcheck() {
 mnt=$(cat /var/plexguide/server.hd.path)
-if [[ "$mnt" != "/mnt" ]];then 
+if [[ "$mnt" != "/mnt" ]];then
     tee <<-EOF
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ⛔️  SORRY !!! MOUNT DOCKER and UPLOAD DOCKER DONT WORK WITH PROCESSING DISCS
@@ -78,20 +78,19 @@ fi
 }
 
 function rclone() {
-  curl -fsSL https://raw.githubusercontent.com/mrfret/misc/master/rcupdate.sh | sudo bash
+  curl -fsSL https://raw.githubusercontent.com/eidanyosoy/RCupdate/master/rcupdate.sh | sudo bash
 }
 
 function clone() {
     sudo rm -rf /opt/pgclone
-    curl -fsSL https://raw.githubusercontent.com/MatchbookLab/local-persist/master/scripts/install.sh | sudo bash
-    sudo docker volume create -d local-persist -o mountpoint=/mnt --name=unionfs 
-    sudo git clone --quiet https://github.com/mrfret/PGClone.git /opt/pgclone
-    rm -rf /opt/plexguide/menu/pgclone/pgclone.sh 
+    curl -fsSL https://raw.githubusercontent.com/eidanyosoy/local-persist/master/scripts/install.sh | sudo bash
+    sudo docker volume create -d local-persist -o mountpoint=/mnt --name=unionfs
+    sudo git clone --quiet https://github.com/eidanyosoy/PGClone.git /opt/pgclone
+    rm -rf /opt/plexguide/menu/pgclone/pgclone.sh
     mv /opt/pgclone/newpgclone.sh /opt/plexguide/menu/pgcloner/pgclone.sh
     sudo chown -cR 1000:1000 /opt/pgclone/ 1>/dev/null 2>&1
-    sudo chmod -cR 755 /opt/pgclone 1>/dev/null 2>&1	
+    sudo chmod -cR 755 /opt/pgclone 1>/dev/null 2>&1
     sudo bash /opt/plexguide/menu/pgcloner/pgclone.sh
 }
 
 sudocheck
-
